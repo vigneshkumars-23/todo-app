@@ -75,7 +75,18 @@ const Todo = () => {
             }
         );
     }
-    const deleteTodo = (id: number) => {
+    const deleteTodo = async(id: number) => {
+        const originalTemp: TodoObject[] = [...todoList];
+        const temp: TodoObject[] = originalTemp.filter((todo) => todo.id !== id);
+        setTodoList(temp);
+        try{
+            const response = await updateTodo(temp);
+            if(response.status !== 200)
+                throw new Error('DB update failed!');
+        } catch(error){
+            console.log(error);
+            setTodoList(originalTemp);
+        }
         setTodoList((prevTodos: TodoObject[]) => {
             return prevTodos.filter((todo) => todo.id !== id);
         });
